@@ -1,5 +1,3 @@
-# TODO
-# - build offline without maven
 #
 # Conditional build:
 %bcond_with	javadoc		# don't build javadoc
@@ -9,21 +7,13 @@
 Summary:	Java API for working with compressed files and archivers
 Name:		java-%{srcname}
 Version:	1.8.1
-Release:	0.1
+Release:	1
 License:	Apache v2.0
 Group:		Libraries/Java
 Source0:	http://archive.apache.org/dist/commons/compress/source/%{srcname}-%{version}-src.tar.gz
 # Source0-md5:	f5aaa32681260f71cdc440493f475c42
 URL:		http://commons.apache.org/compress/
-#BuildRequires:	java-commons-parent
-BuildRequires:	java-junit
 BuildRequires:	java-xz
-BuildRequires:	maven >= 2
-#BuildRequires:	maven-local
-#BuildRequires:	mvn(junit:junit)
-#BuildRequires:	mvn(org.apache.commons:commons-parent:pom:)
-#BuildRequires:	mvn(org.apache.felix:maven-bundle-plugin)
-#BuildRequires:	mvn(org.apache.maven.plugins:maven-assembly-plugin)
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -43,7 +33,14 @@ This package provides %{summary}.
 %setup -q -n %{srcname}-%{version}-src
 
 %build
-mvn package
+required_jars="xz"
+CLASSPATH=$(build-classpath $required_jars)
+export CLASSPATH
+
+# do what 'mvn package' would
+install -d target/{classes,test-classes}
+%javac -d target/classes -encoding UTF-8 $(find src/main -type f -name "*.java")
+%jar -cvf target/%{srcname}-%{version}.jar -C target/classes .
 
 %install
 rm -rf $RPM_BUILD_ROOT
