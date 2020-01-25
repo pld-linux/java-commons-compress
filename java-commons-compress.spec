@@ -3,7 +3,6 @@
 %bcond_with	javadoc		# don't build javadoc
 
 %define		srcname		commons-compress
-%include	/usr/lib/rpm/macros.java
 Summary:	Java API for working with compressed files and archivers
 Name:		java-%{srcname}
 Version:	1.8.1
